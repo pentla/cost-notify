@@ -1,7 +1,5 @@
 package entity
 
-import "strconv"
-
 type DailyBudget struct {
 	CostAmount             float64
 	AlertThresholdExceeded int
@@ -21,23 +19,21 @@ Cost Alertのpayload
 }
 */
 
-func ParseDailyBudget(data map[string]string) (*DailyBudget, error) {
-	costAmount, err := strconv.ParseFloat(data["costAmount"], 64)
-	if err != nil {
-		return nil, err
-	}
-	alertThresholdExceeded, err := strconv.ParseFloat(data["alertThresholdExceeded"], 64)
-	if err != nil {
-		return nil, err
-	}
-	alertExceedPercent := int(alertThresholdExceeded * 10)
-	budgetAmount, err := strconv.ParseFloat(data["budgetAmount"], 64)
-	if err != nil {
-		return nil, err
-	}
+type CostMessage struct {
+	BudgetDisplayName      string  `json:"budgetDisplayName"`
+	AlertThresholdExceeded float64 `json:"alertThresholdExceeded"`
+	CostAmount             float64 `json:"costAmount"`
+	CostIntervalStart      string  `json:"costIntervalStart"`
+	BudgetAmount           float64 `json:"budgetAmount"`
+	BudgetAmountType       string  `json:"budgetAmountType"`
+	CurrencyCode           string  `json:"currencyCode"`
+}
+
+func ParseDailyBudget(data CostMessage) (*DailyBudget, error) {
+	alertExceedPercent := int(data.AlertThresholdExceeded * 10)
 	return &DailyBudget{
-		CostAmount:             costAmount,
+		CostAmount:             data.CostAmount,
 		AlertThresholdExceeded: alertExceedPercent,
-		BudgetAmount:           budgetAmount,
+		BudgetAmount:           data.BudgetAmount,
 	}, nil
 }

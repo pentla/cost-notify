@@ -2,32 +2,26 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"os"
+	"fmt"
 
 	"cloud.google.com/go/pubsub"
-	"github.com/pentla/cost-notify/entity"
-	"github.com/pentla/cost-notify/slack"
-	"golang.org/x/xerrors"
+	"github.com/pentla/cost-notify/cloudfunction"
 )
 
-type SlackPayload struct{}
-
-var webhook = os.Getenv("SLACK_WEBHOOK")
-
-func CostNotify(ctx context.Context, m *pubsub.Message) error {
-	data := make(map[string]string)
-	err := json.Unmarshal(m.Data, &data)
+func main() {
+	ctx := context.Background()
+	var m pubsub.Message
+	m.Data = []byte(`{
+		"budgetDisplayName": "name-of-budget",
+		"alertThresholdExceeded": 1.0,
+		"costAmount": 100.01,
+		"costIntervalStart": "2019-01-01T00:00:00Z",
+		"budgetAmount": 100.00,
+		"budgetAmountType": "SPECIFIED_AMOUNT",
+		"currencyCode": "USD"
+	}`)
+	err := cloudfunction.CostNotify(ctx, m)
 	if err != nil {
-		return xerrors.Errorf("json marshal error: %v", err)
+		fmt.Println(err)
 	}
-	budget, err := entity.ParseDailyBudget(data)
-	if err != nil {
-		return xerrors.Errorf("Failed to parse message: %v", err)
-	}
-	err = slack.PostBudget(webhook, budget)
-	if err != nil {
-		return err
-	}
-	return nil
 }
