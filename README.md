@@ -19,11 +19,14 @@ https://slack.com/intl/ja-jp/help/articles/115005265063-Slack-%E3%81%A7%E3%81%AE
 
 - SLACK_WEBHOOK
     - slackの[incoming_webhook](https://slack.com/intl/ja-jp/help/articles/115005265063-Slack-%E3%81%A7%E3%81%AE-Incoming-Webhook-%E3%81%AE%E5%88%A9%E7%94%A8)で得られるURLです。
-
+- SLACK_USERID
+    - 任意です
+    - slackのプロフィールから取得できるmemberIDです
+    - 設定するとSlackのメッセージにメンションがつきます
 ## デプロイ
 
 ```bash
-gcloud functions deploy cost_notify --entry-point=CostNotify --runtime=go116 --triger-topic={Cloud Pub/Subのトピック名} --set-build-env-vars SLACK_WEBHOOK=xxx
+gcloud functions deploy cost_notify --entry-point=CostNotify --runtime=go116 --triger-topic={Cloud Pub/Subのトピック名} --set-build-env-vars SLACK_WEBHOOK=xxx,SLACK_USERID=xxx
 ```
 
 詳しくは[CloudFunctionドキュメント](https://cloud.google.com/sdk/gcloud/reference/functions/deploy)より。

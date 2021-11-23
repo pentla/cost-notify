@@ -19,9 +19,12 @@ type SlackText struct {
 	// Channel    string `json:"channel"`
 }
 
-func PostBudget(webhookURL string, budget *entity.DailyBudget) error {
+func PostBudget(webhookURL string, userID string, budget *entity.DailyBudget) error {
 	payload := SlackText{
 		Text: fmt.Sprintf("GCPの予算の%d %%に達しました。現在の課金額: %.2f, 予算: %.2f", budget.AlertThresholdExceeded, budget.CostAmount, budget.BudgetAmount),
+	}
+	if userID != "" {
+		payload.Text = fmt.Sprintf("<@%s> ", userID) + payload.Text
 	}
 	payloadJSON, err := json.Marshal(payload)
 	if err != nil {

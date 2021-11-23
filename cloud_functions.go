@@ -14,6 +14,7 @@ import (
 type SlackPayload struct{}
 
 var webhook = os.Getenv("SLACK_WEBHOOK")
+var userID = os.Getenv("SLACK_USERID")
 
 func CostNotify(ctx context.Context, m pubsub.Message) error {
 	var data entity.CostMessage
@@ -25,7 +26,7 @@ func CostNotify(ctx context.Context, m pubsub.Message) error {
 	if err != nil {
 		return xerrors.Errorf("Failed to parse message: %v", err)
 	}
-	err = slack.PostBudget(webhook, budget)
+	err = slack.PostBudget(webhook, userID, budget)
 	if err != nil {
 		return xerrors.Errorf("Failed to post slack: %v", err)
 	}
