@@ -2,6 +2,8 @@
 
 GCPの予算アラートをSlackに送信するスクリプトです。
 
+![Slackimage](notify.png)
+
 ## 用意
 
 1. GCPの予算アラートを作成します。
